@@ -1,7 +1,7 @@
 第一步：
 将
 /src/main/resources/config.sample
-另存为：
+另存一份，存的名字为：
 /src/main/resources/config.properties
 
 /src/main/resources/config.properties 这个文件我已经加入ignore，不会被提交。

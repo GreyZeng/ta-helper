@@ -49,6 +49,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -59,9 +62,18 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class App {
     public static void main(String[] args) {
+        String user = "greyzeng";
+        int pageIndex = 1;
+        int pageSize = 30;
+        List<String> comments = comment(user,pageIndex,pageSize);
+        for (String comment : comments) {
+            System.out.println(comment);
+        }
+
+    }
+    public static List<String> comment(String user, int pageIndex, int pageSize) {
         String cookie = ResourceUtil.getKey("cookie");
 
-        String user = "greyzeng";
         String url = UrlBuilder.of("https://home.cnblogs.com/ajax/feed/recent", UTF_8).addQuery("alias", user).build();
         String referer = "https://home.cnblogs.com/u/" + user + "/";
         String body = HttpRequest.post(url).header("authority", "home.cnblogs.com")
@@ -78,22 +90,28 @@ public class App {
                 .header("referer", referer)
                 .header("accept-language", "zh-CN,zh;q=0.9,en;q=0.8")
                 .header("cookie", cookie)
-                .body("{\"feedListType\":\"me\",\"appId\":\"\",\"pageIndex\":1,\"pageSize\":30,\"groupId\":\"\"}")
+                .body("{\"feedListType\":\"me\",\"appId\":\"\",\"pageIndex\":" +
+                        pageIndex +
+                        ",\"pageSize\":" +
+                        pageSize +
+                        ",\"groupId\":\"\"}")
                 .execute().body();
         Document document = Jsoup.parse(body.trim());
         Elements feedItems = document.getElementsByClass("feed_item");
         Elements feedDescs;
         Elements feedDates;
+        List<String> comments = new ArrayList<>();
         for (Element feedItem : feedItems) {
             Elements feedTitles = feedItem.getElementsByClass("feed_title");
             if (null != feedTitles && !feedTitles.get(0).text().contains("发表博客：")) {
                 feedDescs = feedItem.getElementsByClass("feed_desc");
                 feedDates = feedItem.getElementsByClass("feed_date");
                 if (feedDescs != null) {
-                    System.out.println(feedDates.get(0).text() + " " + feedDescs.get(0).text());
+                    comments.add(feedDates.get(0).text() + " " + feedDescs.get(0).text());
                 }
             }
         }
+        return comments;
     }
 
 }
