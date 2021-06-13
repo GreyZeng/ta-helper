@@ -32,3 +32,4 @@ build/
 /.gradle/
 /bin/
 /out/
+/src/main/resources/config.properties
