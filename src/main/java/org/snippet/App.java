@@ -60,7 +60,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class App {
     public static void main(String[] args) {
         String cookie = ResourceUtil.getKey("cookie");
-        System.out.println(cookie);
+
         String user = "greyzeng";
         String url = UrlBuilder.of("https://home.cnblogs.com/ajax/feed/recent", UTF_8).addQuery("alias", user).build();
         String referer = "https://home.cnblogs.com/u/" + user + "/";
