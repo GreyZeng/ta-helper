@@ -52,16 +52,16 @@ import java.util.List;
  * @since
  */
 public class App {
-	private static final Boolean FIRST = true;
+    private static final Boolean FIRST = true;
 
-	private static final String TA_PATH = "output\\ta";
-	private static final String STU_PATH = "output\\stu";
-	
+    private static final String TA_PATH = "output\\ta";
+    private static final String STU_PATH = "output\\stu";
+
     public static void main(String[] args) {
-    	Report taReport = new Report(LocalDate.now(), TA_PATH);
-    	if(FIRST) {
-    		List<ReportRecord> report = new ArrayList<ReportRecord>();
-    		report.add(new ReportRecord("单老师", "fzuedu", "https://home.cnblogs.com/u/fzuedu/", 577, 16));
+        Report taReport = new Report(LocalDate.now(), TA_PATH);
+        if (FIRST) {
+            List<ReportRecord> report = new ArrayList<ReportRecord>();
+            report.add(new ReportRecord("单老师", "fzuedu", "https://home.cnblogs.com/u/fzuedu/", 577, 16));
             report.add(new ReportRecord("曾助教", "greyzeng", "https://home.cnblogs.com/u/greyzeng/", 395, 7));
             report.add(new ReportRecord("张助教", "zhangadian", "https://home.cnblogs.com/u/zhangadian/", 273, 0));
             report.add(new ReportRecord("杨助教", "cykablyat", "https://home.cnblogs.com/u/cykablyat/", 242, 0));
@@ -69,11 +69,11 @@ public class App {
             report.add(new ReportRecord("汪老师", "cocoSE", "https://home.cnblogs.com/u/cocoSE/", 191, 4));
             report.add(new ReportRecord("徐助教", "kofyou", "https://home.cnblogs.com/u/kofyou/", 191, 3));
             report.add(new ReportRecord("林助教", "lxy3", "https://home.cnblogs.com/u/lxy3/", 155, 0));
-    		taReport.initReportByNew(report);
-    	} else {
-    		taReport.initReportByJson();
-    	}
-    	taReport.generateReport();
+            taReport.initReportByNew(report);
+        } else {
+            taReport.initReportByJson();
+        }
+        taReport.generateReport();
 
 //    	Report stuReport = new Report(LocalDate.now(), STU_PATH);
 //    	if(FIRST) {
@@ -93,5 +93,3 @@ public class App {
     }
 
 }
-
-

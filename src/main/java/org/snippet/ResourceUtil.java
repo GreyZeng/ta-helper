@@ -2,7 +2,6 @@ package org.snippet;
 
 import java.util.ResourceBundle;
 
-
 /**
  * @author <a href="mailto:410486047@qq.com">Grey</a>
  * @since
@@ -18,4 +17,3 @@ public class ResourceUtil {
         return resourceBundle.getString(key);
     }
 }
-
