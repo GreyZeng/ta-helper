@@ -13,4 +13,10 @@
 把cookie复制到/src/main/resources/config.properties下的cookie项中。
 
 第四步：
+修改`OUTPUT_JSONS`，`OUTPUT_COMMENTS`和`OUTPUT_REPORTS`为本地文件夹路径，分别用于存储程序输出的json，评论和报告。
+
+第五步：
+根据情况设置`FIRST`；首次使用设为`true`并在`initReportByNew`填充数据；后续使用设为`false`。
+
+第六步：
 执行App.java的main方法

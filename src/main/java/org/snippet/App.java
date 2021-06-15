@@ -49,10 +49,29 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 获取助教点评和团队反馈
@@ -61,17 +80,94 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since
  */
 public class App {
+	private static final Boolean FIRST = false;
+	
+	private static final String OUTPUT_JSONS = "output\\jsons\\";
+	private static final String OUTPUT_COMMENTS = "output\\comments\\";
+	private static final String OUTPUT_REPORTS = "output\\reports\\";
+	
+	static List<ReportRecord> report = new ArrayList<ReportRecord>(); 
+	
+	static LocalDate today = LocalDate.now();
+	
     public static void main(String[] args) {
-        String user = "greyzeng";
+    	if(FIRST) {
+    		initReportByNew();
+    	} else {
+    		initReportByJson();
+    	}
+
         int pageIndex = 1;
         int pageSize = 30;
-        List<String> comments = comment(user,pageIndex,pageSize);
-        for (String comment : comments) {
-            System.out.println(comment);
+        for (ReportRecord record : report) {
+        	String user = record.id;
+            List<String> comments = comment(user, pageIndex, pageSize);
+            record.dailyNew = getDailyNew(comments);
+            System.out.println(comments.size() + " " + record.dailyNew);
         }
-
+        
+        writeJson();
+        writeReport();
     }
-    public static List<String> comment(String user, int pageIndex, int pageSize) {
+
+	private static void readJson() {
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader(OUTPUT_JSONS + today.minusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE))) {
+        	Type listType = new TypeToken<ArrayList<ReportRecord>>(){}.getType();
+            report = gson.fromJson(reader, listType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	private static void writeJson() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try (FileWriter writer = new FileWriter(OUTPUT_JSONS + today.format(DateTimeFormatter.ISO_LOCAL_DATE))) {
+            gson.toJson(report, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+
+	private static void initReportByJson() {
+		readJson();
+		for(ReportRecord record : report ) {
+			record.total += record.dailyNew;
+			record.dailyNew = 0;
+		}
+	}
+
+	private static void initReportByNew() {
+        report.add(new ReportRecord("单老师", "fzuedu", "", 562, 15));
+        report.add(new ReportRecord("曾助教", "greyzeng", "", 380, 15));
+        report.add(new ReportRecord("张助教", "zhangadian", "", 255, 18));
+        report.add(new ReportRecord("杨助教", "cykablyat", "", 242, 0));
+        report.add(new ReportRecord("孙助教", "ago8910", "", 198, 3));
+        report.add(new ReportRecord("汪老师", "cocoSE", "", 191, 0));
+        report.add(new ReportRecord("徐助教", "kofyou", "", 189, 2));
+        report.add(new ReportRecord("林助教", "lxy3", "", 155, 0));
+	}
+
+	private static int getDailyNew(List<String> comments) {
+    	int dailyNew = 0;
+		for(String comment : comments) {
+			String commentDateString = comment.split(" ")[0];
+			LocalDate commentDate = LocalDate.parse(commentDateString, DateTimeFormatter.ISO_LOCAL_DATE);
+			
+			LocalDate yesterday = today.minusDays(1);
+			if(commentDate.equals(yesterday)) {
+				dailyNew++;
+				System.out.println(comment);
+			}
+		}
+		return dailyNew;
+	}
+    
+    private static void writeReport() {
+		
+	}
+    
+	public static List<String> comment(String user, int pageIndex, int pageSize) {
         String cookie = ResourceUtil.getKey("cookie");
 
         String url = UrlBuilder.of("https://home.cnblogs.com/ajax/feed/recent", UTF_8).addQuery("alias", user).build();
