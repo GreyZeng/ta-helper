@@ -30,41 +30,50 @@ public class ReportRecord {
 		this.link = link;
 		this.total = total;
 		this.dailyNew = dailyNew;
+		comments = new ArrayList<String>();
 	}
 	
-	public void setComments() {
+	public void prepare() {
+		total += dailyNew;
+		dailyNew = 0;
+		comments = new ArrayList<String>();
+	}
+	
+	public void setComments(LocalDate today) {
 		int pageIndex = 1;
 		int pageSize = 30;
-		comments = comments(id, pageIndex, pageSize);
+		boolean nextPage;
+		do {
+			nextPage = false;
+			comments.addAll(comments(id, pageIndex, pageSize));
+			if(sameDay(comments.get(comments.size() - 1), today.minusDays(1))) {
+				nextPage = true;
+				pageIndex ++;
+			}
+		} while (nextPage);
 	}
 	
 	public void setDailyNew() {
 		dailyNew = comments.size();
 	}
 	
+	private boolean sameDay(String comment, LocalDate someday) {
+		String commentDateString = comment.split(" ")[0];
+		LocalDate commentDate = LocalDate.parse(commentDateString, DateTimeFormatter.ISO_LOCAL_DATE);
+		
+	    if(commentDate.equals(someday)) {
+	    	return true;
+	    } else {
+	    	return false;
+	    }
+	}
+	
 	public void filterComments(LocalDate today) {
 		ListIterator<String> iter = comments.listIterator();
 		while(iter.hasNext()){
-			String commentDateString = iter.next().split(" ")[0];
-			LocalDate commentDate = LocalDate.parse(commentDateString, DateTimeFormatter.ISO_LOCAL_DATE);
-			
-			LocalDate yesterday = today.minusDays(1);
-		    if(!commentDate.equals(yesterday)){
-		        iter.remove();
-		    }
-		}
-	}
-	
-	public void writeComments(String path, LocalDate today) {
-		try (FileWriter writer = new FileWriter(path + today.format(DateTimeFormatter.ISO_LOCAL_DATE), StandardCharsets.UTF_8, true)) {
-			writer.write(name + "\n" + "---" + "\n");
-			for(String comment : comments) {
-				writer.write(comment + "\n");
+			if(!sameDay(iter.next(), today.minusDays(1))) {
+				iter.remove();
 			}
-			writer.write("\n");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	

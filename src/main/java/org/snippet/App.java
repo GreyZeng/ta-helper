@@ -52,7 +52,7 @@ import java.util.List;
  * @since
  */
 public class App {
-	private static final Boolean FIRST = false;
+	private static final Boolean FIRST = true;
 
 	private static final String TA_PATH = "output\\ta";
 	private static final String STU_PATH = "output\\stu";
@@ -61,14 +61,14 @@ public class App {
     	Report taReport = new Report(LocalDate.now(), TA_PATH);
     	if(FIRST) {
     		List<ReportRecord> report = new ArrayList<ReportRecord>();
-    		report.add(new ReportRecord("单老师", "fzuedu", "", 562, 15));
-            report.add(new ReportRecord("曾助教", "greyzeng", "", 380, 15));
-            report.add(new ReportRecord("张助教", "zhangadian", "", 255, 18));
-            report.add(new ReportRecord("杨助教", "cykablyat", "", 242, 0));
-            report.add(new ReportRecord("孙助教", "ago8910", "", 198, 3));
-            report.add(new ReportRecord("汪老师", "cocoSE", "", 191, 0));
-            report.add(new ReportRecord("徐助教", "kofyou", "", 189, 2));
-            report.add(new ReportRecord("林助教", "lxy3", "", 155, 0));
+    		report.add(new ReportRecord("单老师", "fzuedu", "https://home.cnblogs.com/u/fzuedu/", 577, 16));
+            report.add(new ReportRecord("曾助教", "greyzeng", "https://home.cnblogs.com/u/greyzeng/", 395, 7));
+            report.add(new ReportRecord("张助教", "zhangadian", "https://home.cnblogs.com/u/zhangadian/", 273, 0));
+            report.add(new ReportRecord("杨助教", "cykablyat", "https://home.cnblogs.com/u/cykablyat/", 242, 0));
+            report.add(new ReportRecord("孙助教", "ago8910", "https://home.cnblogs.com/u/ago8910/", 201, 0));
+            report.add(new ReportRecord("汪老师", "cocoSE", "https://home.cnblogs.com/u/cocoSE/", 191, 4));
+            report.add(new ReportRecord("徐助教", "kofyou", "https://home.cnblogs.com/u/kofyou/", 191, 3));
+            report.add(new ReportRecord("林助教", "lxy3", "https://home.cnblogs.com/u/lxy3/", 155, 0));
     		taReport.initReportByNew(report);
     	} else {
     		taReport.initReportByJson();
@@ -78,15 +78,14 @@ public class App {
 //    	Report stuReport = new Report(LocalDate.now(), STU_PATH);
 //    	if(FIRST) {
 //    		List<ReportRecord> report = new ArrayList<ReportRecord>()
-//    		report.add(new ReportRecord("单老师", "fzuedu", "", 562, 15));
-//            report.add(new ReportRecord("曾助教", "greyzeng", "", 380, 15));
-//            report.add(new ReportRecord("张助教", "zhangadian", "", 255, 18));
-//            report.add(new ReportRecord("杨助教", "cykablyat", "", 242, 0));
-//            report.add(new ReportRecord("孙助教", "ago8910", "", 198, 3));
-//            report.add(new ReportRecord("汪老师", "cocoSE", "", 191, 0));
-//            report.add(new ReportRecord("徐助教", "kofyou", "", 189, 2));
-//            report.add(new ReportRecord("林助教", "lxy3", "", 155, 0));
-//            stuReport.initReportByNew(report);
+//	        report.add(new ReportRecord("曾助教", "greyzeng", "https://home.cnblogs.com/u/greyzeng/", 395, 7));
+//	        report.add(new ReportRecord("张助教", "zhangadian", "https://home.cnblogs.com/u/zhangadian/", 273, 0));
+//	        report.add(new ReportRecord("杨助教", "cykablyat", "https://home.cnblogs.com/u/cykablyat/", 242, 0));
+//	        report.add(new ReportRecord("孙助教", "ago8910", "https://home.cnblogs.com/u/ago8910/", 201, 0));
+//	        report.add(new ReportRecord("汪老师", "cocoSE", "https://home.cnblogs.com/u/cocoSE/", 191, 4));
+//	        report.add(new ReportRecord("徐助教", "kofyou", "https://home.cnblogs.com/u/kofyou/", 191, 3));
+//	        report.add(new ReportRecord("林助教", "lxy3", "https://home.cnblogs.com/u/lxy3/", 155, 0));
+//          stuReport.initReportByNew(report);
 //    	} else {
 //    		stuReport.initReportByJson();
 //    	}

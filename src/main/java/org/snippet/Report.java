@@ -1,5 +1,6 @@
 package org.snippet;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,21 +20,27 @@ import com.google.gson.reflect.TypeToken;
 public class Report {
 	List<ReportRecord> report;
 	LocalDate today;
-	String jsonPath, reportPath, commentPath;
+	String jsonPath, reportPath;
 	
 	public Report(LocalDate today, String path) {
 		this.today = today;
 		jsonPath = path + "\\jsons\\";
 		reportPath = path + "\\reports\\";
-		commentPath = path + "\\comments\\";
+	    File jsonDirectory = new File(jsonPath);
+	    if (! jsonDirectory.exists()){
+	    	jsonDirectory.mkdirs();
+	    }
+	    File reportDirectory = new File(reportPath);
+	    if (! reportDirectory.exists()){
+	    	reportDirectory.mkdirs();
+	    }
 	}
 	
 	public void generateReport() {
 		for (ReportRecord record : report) {
-			record.setComments();
+			record.setComments(today);
 			record.filterComments(today);
 			record.setDailyNew();
-			record.writeComments(commentPath, today);
 		}
 		
         writeJson();
@@ -62,20 +69,22 @@ public class Report {
 	public void initReportByJson() {
 		readJson();
 		for(ReportRecord record : report ) {
-			record.total += record.dailyNew;
-			record.dailyNew = 0;
+			record.prepare();
 		}
 	}
 
 	public void initReportByNew(List<ReportRecord> report) {
         this.report = report;
+		for(ReportRecord record : report ) {
+			record.prepare();
+		}
 	}
     
     private void writeReport() {
     	try (FileWriter writer = new FileWriter(reportPath + today.format(DateTimeFormatter.ISO_LOCAL_DATE), StandardCharsets.UTF_8)) {
-    	    writer.write(String.valueOf(Character.toChars(0x2666)) + "点评和问题收集打卡\n");
+    	    writer.write("点评和问题收集打卡\n");
     	    
-    	    writer.write("\n" + String.valueOf(Character.toChars(0x1F680)) + today.format(DateTimeFormatter.ISO_LOCAL_DATE) + "当日点评排行榜\n");
+    	    writer.write("\n" + String.valueOf(Character.toChars(0x1F680)) + today.minusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE) + "当日点评排行榜\n");
     	    writer.write("---\n");
     	    
     	    Collections.sort(report, (ReportRecord r1, ReportRecord r2) -> r2.dailyNew - r1.dailyNew);
