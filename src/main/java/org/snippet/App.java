@@ -1,5 +1,8 @@
 package org.snippet;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 团队反馈主页：
@@ -42,18 +45,6 @@ package org.snippet;
 //        --data-raw '{"feedListType":"me","appId":"","pageIndex":1,"pageSize":30,"groupId":""}' \
 //        --compressed
 
-import cn.hutool.core.net.url.UrlBuilder;
-import cn.hutool.http.HttpRequest;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
  * 获取助教点评和团队反馈
  *
@@ -61,59 +52,44 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since
  */
 public class App {
+    private static final Boolean FIRST = true;
+
+    private static final String TA_PATH = "output\\ta";
+    private static final String STU_PATH = "output\\stu";
+
     public static void main(String[] args) {
-        String user = "greyzeng";
-        int pageIndex = 1;
-        int pageSize = 30;
-        List<String> comments = comment(user,pageIndex,pageSize);
-        for (String comment : comments) {
-            System.out.println(comment);
+        Report taReport = new Report(LocalDate.now(), TA_PATH);
+        if (FIRST) {
+            List<ReportRecord> report = new ArrayList<ReportRecord>();
+            report.add(new ReportRecord("单老师", "fzuedu", "https://home.cnblogs.com/u/fzuedu/", 577, 16));
+            report.add(new ReportRecord("曾助教", "greyzeng", "https://home.cnblogs.com/u/greyzeng/", 395, 7));
+            report.add(new ReportRecord("张助教", "zhangadian", "https://home.cnblogs.com/u/zhangadian/", 273, 0));
+            report.add(new ReportRecord("杨助教", "cykablyat", "https://home.cnblogs.com/u/cykablyat/", 242, 0));
+            report.add(new ReportRecord("孙助教", "ago8910", "https://home.cnblogs.com/u/ago8910/", 201, 0));
+            report.add(new ReportRecord("汪老师", "cocoSE", "https://home.cnblogs.com/u/cocoSE/", 191, 4));
+            report.add(new ReportRecord("徐助教", "kofyou", "https://home.cnblogs.com/u/kofyou/", 191, 3));
+            report.add(new ReportRecord("林助教", "lxy3", "https://home.cnblogs.com/u/lxy3/", 155, 0));
+            taReport.initReportByNew(report);
+        } else {
+            taReport.initReportByJson();
         }
+        taReport.generateReport();
 
-    }
-    public static List<String> comment(String user, int pageIndex, int pageSize) {
-        String cookie = ResourceUtil.getKey("cookie");
-
-        String url = UrlBuilder.of("https://home.cnblogs.com/ajax/feed/recent", UTF_8).addQuery("alias", user).build();
-        String referer = "https://home.cnblogs.com/u/" + user + "/";
-        String body = HttpRequest.post(url).header("authority", "home.cnblogs.com")
-                .header("sec-ch-ua", "\" Not;A Brand\";v=\"99\", \"Microsoft Edge\";v=\"91\", \"Chromium\";v=\"91\"")
-                .header("accept", "text / plain, */*; q=0.01")
-                .header("x-requested-with", "XMLHttpRequest")
-                .header("sec-ch-ua-mobile", "?0")
-                .header("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36 Edg/91.0.864.48")
-                .header("content-type", "application/json; charset=UTF-8")
-                .header("origin", "https://home.cnblogs.com")
-                .header("sec-fetch-site", "same-origin")
-                .header("sec-fetch-mode", "cors")
-                .header("sec-fetch-dest", "empty")
-                .header("referer", referer)
-                .header("accept-language", "zh-CN,zh;q=0.9,en;q=0.8")
-                .header("cookie", cookie)
-                .body("{\"feedListType\":\"me\",\"appId\":\"\",\"pageIndex\":" +
-                        pageIndex +
-                        ",\"pageSize\":" +
-                        pageSize +
-                        ",\"groupId\":\"\"}")
-                .execute().body();
-        Document document = Jsoup.parse(body.trim());
-        Elements feedItems = document.getElementsByClass("feed_item");
-        Elements feedDescs;
-        Elements feedDates;
-        List<String> comments = new ArrayList<>();
-        for (Element feedItem : feedItems) {
-            Elements feedTitles = feedItem.getElementsByClass("feed_title");
-            if (null != feedTitles && !feedTitles.get(0).text().contains("发表博客：")) {
-                feedDescs = feedItem.getElementsByClass("feed_desc");
-                feedDates = feedItem.getElementsByClass("feed_date");
-                if (feedDescs != null) {
-                    comments.add(feedDates.get(0).text() + " " + feedDescs.get(0).text());
-                }
-            }
-        }
-        return comments;
+//    	Report stuReport = new Report(LocalDate.now(), STU_PATH);
+//    	if(FIRST) {
+//    		List<ReportRecord> report = new ArrayList<ReportRecord>()
+//	        report.add(new ReportRecord("曾助教", "greyzeng", "https://home.cnblogs.com/u/greyzeng/", 395, 7));
+//	        report.add(new ReportRecord("张助教", "zhangadian", "https://home.cnblogs.com/u/zhangadian/", 273, 0));
+//	        report.add(new ReportRecord("杨助教", "cykablyat", "https://home.cnblogs.com/u/cykablyat/", 242, 0));
+//	        report.add(new ReportRecord("孙助教", "ago8910", "https://home.cnblogs.com/u/ago8910/", 201, 0));
+//	        report.add(new ReportRecord("汪老师", "cocoSE", "https://home.cnblogs.com/u/cocoSE/", 191, 4));
+//	        report.add(new ReportRecord("徐助教", "kofyou", "https://home.cnblogs.com/u/kofyou/", 191, 3));
+//	        report.add(new ReportRecord("林助教", "lxy3", "https://home.cnblogs.com/u/lxy3/", 155, 0));
+//          stuReport.initReportByNew(report);
+//    	} else {
+//    		stuReport.initReportByJson();
+//    	}
+//    	stuReport.generateReport();
     }
 
 }
-
-
